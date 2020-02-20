@@ -1,0 +1,93 @@
+<html>
+
+  <head>
+    <script type="module">
+      import './alpheios-messaging.js'
+      let service
+      let config
+
+      function init() {
+        setTreebankUrl();
+        config =  { name: 'treebank', targetIframeID: 'alpheios-treebank-frame', targetURL: getServiceTargetUrl() }
+        service = new MessagingService("treebank-service", new WindowIframeDestination(config))
+      }
+      function setTreebankUrl() {
+        var url = document.querySelector("#treebank-url").value
+        document.querySelector("#alpheios-treebank-frame").setAttribute('src', url);
+      }
+      function getServiceTargetUrl() {
+        var url = document.querySelector("#treebank-url").value
+        var origin = new URL(url).origin;
+        return origin;
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        init();
+      })
+
+      let sendRequest = async function (requestBody) {
+        const responseMessage = await service.sendRequestTo(config.name, new RequestMessage(requestBody))
+        document.querySelector("#serviceResponse").value = JSON.stringify(responseMessage.body);
+      }
+
+      document.querySelector("#get-morph").addEventListener("click", () => { 
+        const requestBody = {
+          getMorph: {
+            sentenceId: document.querySelector("#sentenceId").value,
+            wordId: document.querySelector("#wordId").value
+          }
+        }
+        sendRequest(requestBody)
+      })
+      document.querySelector("#treebank-url").addEventListener("change", () => { 
+        init();
+      })
+      document.querySelector("#refresh").addEventListener("click", () => { 
+        document.querySelector("#alpheios-treebank-frame").style = "display:block;";
+        sendRequest( { refreshView: {} } )
+      })
+      document.querySelector("#next-chunk").addEventListener("click", () => { 
+        sendRequest( { nextSentence: {} } )
+      })
+      document.querySelector("#prev-chunk").addEventListener("click", () => { 
+        sendRequest( { prevSentence: {} } )
+      })
+      document.querySelector("#goto-ref").addEventListener("click", () => { 
+        const requestBody = {
+          gotoSentence: {
+            sentenceId: document.querySelector("#refSentenceId").value,
+          }
+        }
+        sendRequest(requestBody)
+      })
+
+    </script>
+  </head>
+
+  <body>
+    <p>This is a sample Arethusa API Client. It calls the API via the Perseus Template Template Treebank Service.</p>
+    <p>
+      <label for="#treebank=url">Treebank Template URL:
+        <input id="treebank-url" type="text" size="100" value="http://localhost:3000/embed/on-the-murder-of-eratosthenes-1-50/1">
+      </label>
+    </p>
+    <p>
+      <button id="get-morph">Get Morph:</button>
+      <label for="#sentenceID">Sentence: <input type="text" id="sentenceId"></label>
+      <label for="#wordId"><input type="text" id="wordId"></label>
+    </p>
+    <p><button id="refresh">Refresh</button></p>
+    <p><button id="next-chunk">Next Chunk</button></p>
+    <p><button id="prev-chunk">Prev Chunk</button></p>
+    <p>
+      <button id="goto-ref">Goto Ref:</button>
+      <label for="#refSentenceId">Sentence: <input type="text" id="refSentenceId"></label>
+    </p>
+    <p>
+      <label for="#serviceResponse">Service Response:</label><textarea id="serviceResponse" cols="100" rows="10"></textarea>
+    </p>
+    <iframe id="alpheios-treebank-frame" src="" width="75%" height="75%">
+    </iframe>
+  </body>
+
+</html>
