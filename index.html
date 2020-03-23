@@ -8,7 +8,7 @@
 
       function init() {
         setTreebankUrl();
-        config =  { name: 'treebank', targetIframeID: 'alpheios-treebank-frame', targetURL: getServiceTargetUrl() }
+        config =  { name: 'treebank', targetIframeID: 'alpheios-treebank-frame', targetURL: getServiceTargetUrl(), commModes: [WindowIframeDestination.commModes.SEND] }
         service = new MessagingService("treebank-service", new WindowIframeDestination(config))
       }
       function setTreebankUrl() {
@@ -44,13 +44,16 @@
       })
       document.querySelector("#refresh").addEventListener("click", () => { 
         document.querySelector("#alpheios-treebank-frame").style = "display:block;";
-        sendRequest( { refreshView: {} } )
+        //sendRequest( { refreshView: {} } )
       })
       document.querySelector("#next-chunk").addEventListener("click", () => { 
         sendRequest( { nextSentence: {} } )
       })
       document.querySelector("#prev-chunk").addEventListener("click", () => { 
         sendRequest( { prevSentence: {} } )
+      })
+      document.querySelector("#toggle").addEventListener("click", () => { 
+        document.querySelector("#alpheios-treebank-frame").style = "display:none;";
       })
       document.querySelector("#goto-ref").addEventListener("click", () => { 
         const requestBody = {
@@ -76,6 +79,7 @@
       <label for="#sentenceID">Sentence: <input type="text" id="sentenceId"></label>
       <label for="#wordId"><input type="text" id="wordId"></label>
     </p>
+    <p><button id="toggle">Toggle</button></p>
     <p><button id="refresh">Refresh</button></p>
     <p><button id="next-chunk">Next Chunk</button></p>
     <p><button id="prev-chunk">Prev Chunk</button></p>
@@ -86,7 +90,7 @@
     <p>
       <label for="#serviceResponse">Service Response:</label><textarea id="serviceResponse" cols="100" rows="10"></textarea>
     </p>
-    <iframe id="alpheios-treebank-frame" src="" width="75%" height="75%">
+    <iframe id="alpheios-treebank-frame" src="" width="600px" height="100%">
     </iframe>
   </body>
 
