@@ -56,9 +56,24 @@
         document.querySelector("#alpheios-treebank-frame").style = "display:none;";
       })
       document.querySelector("#goto-ref").addEventListener("click", () => { 
+        let wordIds = document.querySelectorAll(".refWordId")
+        let reqWordIds = []
+        wordIds.forEach( (w) => reqWordIds.push(w.value) )
         const requestBody = {
           gotoSentence: {
             sentenceId: document.querySelector("#refSentenceId").value,
+            wordIds: reqWordIds
+          }
+        }
+        sendRequest(requestBody)
+      })
+      document.querySelector("#find-word").addEventListener("click", () => {
+        const requestBody = {
+          findWord: {
+            sentenceId: document.querySelector("#findIn").value,
+            word: document.querySelector("#refWord").value,
+            prefix: document.querySelector("#refPrefix").value,
+            suffix: document.querySelector("#refSuffix").value
           }
         }
         sendRequest(requestBody)
@@ -86,9 +101,18 @@
     <p>
       <button id="goto-ref">Goto Ref:</button>
       <label for="#refSentenceId">Sentence: <input type="text" id="refSentenceId"></label>
+      <label>Word: <input type="text" class="refWordId"></label>
+      <label>Word: <input type="text" class="refWordId"></label>
     </p>
     <p>
-      <label for="#serviceResponse">Service Response:</label><textarea id="serviceResponse" cols="100" rows="10"></textarea>
+      <button id="find-word">Find Word:</button>
+      <label for="#findIn">In Sentence: <input type="text" id="findIn"></label>
+      <label for="#refWord">Word: <input type="text" id="refWord"></label>
+      <label for="#refPrefix">Prefix: <input type="text" id="refPrefix"></label>
+      <label for="#refSuffix">Suffix: <input type="text" id="refSuffix"></label>
+    </p>
+    <p>
+      <label for="#serviceResponse">Service Response:</label><textarea id="serviceResponse" cols="100" rows="5"></textarea>
     </p>
     <iframe id="alpheios-treebank-frame" src="" width="600px" height="100%">
     </iframe>
