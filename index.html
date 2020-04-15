@@ -58,7 +58,7 @@
       document.querySelector("#goto-ref").addEventListener("click", () => { 
         let wordIds = document.querySelectorAll(".refWordId")
         let reqWordIds = []
-        wordIds.forEach( (w) => reqWordIds.push(w.value) )
+        wordIds.forEach( (w) => { if (w.value) { reqWordIds.push(w.value) } } )
         const requestBody = {
           gotoSentence: {
             sentenceId: document.querySelector("#refSentenceId").value,
